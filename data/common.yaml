@@ -1,0 +1,12 @@
+---
+nginx::install_ensure: 'present'
+nginx::install_name: 'nginx'
+nginx::config_ensure: 'file'
+nginx::config_path: '/etc/nginx/nginx.conf'
+nginx::service_name: 'nginx'
+nginx::service_ensure: 'running'
+nginx::service_enable: true
+nginx::vhosts_dir: '/etc/nginx/conf.d'
+nginx::vhosts_owner: 'nginx'
+nginx::vhosts_group: 'nginx'
+

@@ -1,0 +1,58 @@
+<%# virtual hosts template -%>
+server {
+        listen <%= $port %>;
+        listen [::]:<%= $port %>;
+<%- if $httpsport =~ String[1] { -%>
+        listen <%= $httpsport %> http2 ssl;
+        listen [::]:<%= $httpsport %> http2 ssl;
+<%- } -%>
+
+        server_name <%= $subdomain %>.com www.<%= $subdomain %>.com;
+        root <%= $docroot %>;
+        index index.html index.htm index.php;
+<%- if $ssl_certificate =~ String[1] { -%>
+        ssl_certificate <%= $ssl_certificate %>;
+<%- } -%>
+<%- if $ssl_certificate_key =~ String[1] { -%>       
+        ssl_certificate_key <%= $ssl_certificate_key %>;
+<%- } -%>
+<%- if $ssl_dhparam =~ String[1] { -%>
+        ssl_dhparam <%= $ssl_dhparam %>;
+<%- } -%>
+
+<%- if $php =~ String[1] { -%>
+        charset utf-8;
+
+        # Gzip Settings
+        gzip_static on;
+        gzip on;
+        gzip_types text/css application/javascript text/javascript application/x-javascript image/svg+xml text/plain text/xsd text/xsl text/xml image/x-icon;
+
+                # Media: images, icons, video, audio, HTC
+        location ~* \.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|mp4|ogg|ogv|webm|htc)$ {
+              access_log off;
+              add_header Cache-Control "max-age=2592000";
+            }
+
+                # CSS and Javascript
+        location ~* \.(?:css|js)$ {
+              add_header Cache-Control "max-age=31536000";
+              access_log off;
+            }
+
+                # PHP
+        location ~ \.php {
+                include fastcgi.conf;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/var/run/php-fpm/php-fpm.sock;
+        }
+<%- } -%>
+        location / {
+                try_files $uri $uri/ /index.php?$query_string;
+        }
+
+
+        location ~ /\.ht {
+                deny all;
+        }
+}

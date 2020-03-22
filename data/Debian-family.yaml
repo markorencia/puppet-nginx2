@@ -1,0 +1,7 @@
+---
+nginx::install_name: 'nginx'
+nginx::config_path: '/etc/nginx/nginx.conf'
+nginx::service_name: 'nginx'
+nginx::vhosts_dir: '/etc/nginx/conf.d'
+nginx::vhosts_owner: 'nginx'
+nginx::vhosts_group: 'nginx'

@@ -1,0 +1,42 @@
+# @summary
+#   Generates virtual hosts files based on template
+#
+# @example
+#   nginx::vhosts { 'namevar': }
+#    port      => INT,
+#    subdomain => STR,
+#    admin     => STR,
+#    docroot   => STR,
+define nginx::vhosts (
+#  Integer   $port,
+#  String    $httpsport,
+#  String[1] $subdomain,
+#  String[1] $docroot,
+#  String    $ssl_certificate,
+#  String    $ssl_certificate_key,
+#  String    $ssl_dhparam,
+
+) {
+  file { "${docroot}":
+    ensure => 'directory',
+    owner  => $nginx::vhosts_owner,
+    group  => $nginx::vhosts_group,
+  }
+  
+  file { "${nginx::vhosts_dir}/${subdomain}.conf":
+    ensure  => 'file',
+    owner   => $nginx::vhosts_owner,
+    group   => $nginx::vhosts_group,
+    mode    => '0644',
+    content => epp('nginx/vhosts.conf.epp', {
+      $port                => 80,
+      $httpsport           => '',
+      $subdomain           => 'puppet_vhosts_test',
+      $docroot             => '/usr/share/nginx/html/vhosts_test',
+      $ssl_certificate,    => ''
+      $ssl_certificate_key => '',
+      $ssl_dhparam         => '',
+      }),
+    notify  => Service["${nginx::service_name}"],
+  }
+}
