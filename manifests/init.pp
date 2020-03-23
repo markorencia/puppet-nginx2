@@ -18,8 +18,10 @@ class nginx (
   contain nginx::install
   contain nginx::config
   contain nginx::service
+  contain nginx::generate_vhost
 
   Class['::nginx::install']
   -> Class['::nginx::config']
+  -> Class['::nginx::generate_vhost']
   ~> Class['::nginx::service']
 }

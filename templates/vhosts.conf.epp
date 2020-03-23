@@ -3,10 +3,9 @@ server {
         listen <%= $port %>;
         listen [::]:<%= $port %>;
 <%- if $httpsport =~ String[1] { -%>
-        listen <%= $httpsport %> http2 ssl;
-        listen [::]:<%= $httpsport %> http2 ssl;
+        listen 443 http2 ssl;
+        listen [::]:443 http2 ssl;
 <%- } -%>
-
         server_name <%= $subdomain %>.com www.<%= $subdomain %>.com;
         root <%= $docroot %>;
         index index.html index.htm index.php;
@@ -20,6 +19,7 @@ server {
         ssl_dhparam <%= $ssl_dhparam %>;
 <%- } -%>
 
+        return 302 https://$server_name$request_uri;
 <%- if $php =~ String[1] { -%>
         charset utf-8;
 
@@ -47,6 +47,7 @@ server {
                 fastcgi_pass unix:/var/run/php-fpm/php-fpm.sock;
         }
 <%- } -%>
+
         location / {
                 try_files $uri $uri/ /index.php?$query_string;
         }
